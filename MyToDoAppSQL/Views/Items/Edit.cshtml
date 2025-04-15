@@ -1,0 +1,41 @@
+﻿@model MyToDoAppSQL.Models.Item
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center text-primary">Edit Task</h1>
+    <p class="text-center text-muted">Update the details of your task below.</p>
+    <hr />
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form asp-action="Edit" class="shadow p-4 rounded bg-light">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="mb-3">
+                    <label asp-for="ToDo" class="form-label fw-bold">Task</label>
+                    <input asp-for="ToDo" class="form-control" placeholder="Enter task description" />
+                    <span asp-validation-for="ToDo" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="DueDate" class="form-label fw-bold">Due Date</label>
+                    <input asp-for="DueDate" class="form-control" type="date" />
+                    <span asp-validation-for="DueDate" class="text-danger"></span>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" asp-for="IsComplete" />
+                    <label asp-for="IsComplete" class="form-check-label">Mark as Complete</label>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
