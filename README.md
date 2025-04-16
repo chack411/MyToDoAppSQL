@@ -1,75 +1,101 @@
-# MyToDoAppSQL
+# MyToDoAppSQL ソフトウェア内部仕様書
 
-## 概要
-MyToDoAppSQL は、ASP.NET Core を使用して構築されたシンプルな ToDo アプリケーションです。このアプリケーションは、タスクの作成、編集、削除、詳細表示を行うことができます。
+## 1. システム概要
+MyToDoAppSQL は ASP.NET Core 9.0 と Microsoft SQL Server（Entity Framework Core）を用いたシンプルな ToDo 管理Webアプリケーションです。タスク（ToDo）の登録・編集・削除・詳細表示が可能です。
 
-## 主な機能
-- タスクの一覧表示
-- タスクの作成
-- タスクの編集
-- タスクの削除
-- タスクの詳細表示
-
-## 技術スタック
+## 2. アーキテクチャ構成
 - **フレームワーク**: ASP.NET Core 9.0
-- **データベース**: Microsoft SQL Server (Entity Framework Core を使用)
-- **フロントエンド**: Bootstrap, jQuery
+- **ORM**: Entity Framework Core 9.0
+- **DB**: SQL Server
+- **UI**: Razor Pages, Bootstrap, jQuery
 
-## ディレクトリ構成
-```
-MyToDoAppSQL.sln
-MyToDoAppSQL/
-  ├── Controllers/       # コントローラー
-  ├── Data/              # データベースコンテキスト
-  ├── Migrations/        # マイグレーションファイル
-  ├── Models/            # モデルクラス
-  ├── Properties/        # プロジェクト設定
-  ├── Views/             # ビュー
-  ├── wwwroot/           # 静的ファイル (CSS, JS, ライブラリ)
-  ├── appsettings.json   # アプリケーション設定
-  └── Program.cs         # アプリケーションエントリポイント
-```
+### ディレクトリ構成（抜粋）
+- Controllers/ : コントローラー（ItemsController, HomeController）
+- Data/        : DBコンテキスト（MyToDoAppSQLContext）
+- Models/      : ドメインモデル（Item, ErrorViewModel）
+- Migrations/  : マイグレーション履歴
+- Views/       : 各種Razorビュー
+- wwwroot/     : 静的ファイル
+- Program.cs   : エントリポイント
 
-## データベース構造
-### Item テーブル
-| カラム名      | データ型      | 必須 | 説明             |
-|---------------|---------------|------|------------------|
-| Id            | int           | Yes  | 主キー           |
-| ToDo          | string        | Yes  | タスクの内容     |
-| DueDate       | DateTime      | Yes  | 締切日           |
-| IsComplete    | bool          | Yes  | 完了フラグ       |
+## 3. 主な機能仕様
+### 3.1 タスク（Item）管理
+- 一覧表示（Index）
+- 詳細表示（Details）
+- 新規作成（Create）
+- 編集（Edit）
+- 削除（Delete）
 
-## 主なファイル
-### Program.cs
-アプリケーションのエントリポイントであり、サービスの登録やミドルウェアの設定を行います。
+### 3.2 画面仕様
+- /Items/Index : タスク一覧
+- /Items/Create : タスク新規作成
+- /Items/Edit/{id} : タスク編集
+- /Items/Details/{id} : タスク詳細
+- /Items/Delete/{id} : タスク削除確認
 
-### Controllers/ItemsController.cs
-タスクに関連する操作 (CRUD) を管理するコントローラー。
+## 4. データモデル
+### Item（タスク）
+| プロパティ   | 型        | 必須 | 説明         |
+|--------------|-----------|------|--------------|
+| Id           | int       | ○    | 主キー       |
+| ToDo         | string    | ○    | タスク内容   |
+| DueDate      | DateTime  | ○    | 締切日       |
+| IsComplete   | bool      | ○    | 完了フラグ   |
 
-### Models/Item.cs
-タスクを表すデータモデル。
+### ErrorViewModel
+| プロパティ   | 型        | 説明         |
+|--------------|-----------|--------------|
+| RequestId    | string?   | リクエストID |
+| ShowRequestId| bool      | 表示判定     |
 
-### Views/Items/
-- **Index.cshtml**: タスクの一覧表示。
-- **Create.cshtml**: 新しいタスクの作成フォーム。
-- **Edit.cshtml**: タスクの編集フォーム。
-- **Details.cshtml**: タスクの詳細表示。
-- **Delete.cshtml**: タスクの削除確認。
+## 5. コントローラー仕様
+### ItemsController
+- CRUD全機能を提供。
+- DBアクセスは MyToDoAppSQLContext 経由。
+- POSTアクションは [ValidateAntiForgeryToken] でCSRF対策。
+- ModelState検証あり。
+- 編集・削除時はID存在チェック。
 
-## 使用方法
-1. **データベースの設定**:
-   `appsettings.json` 内の `ConnectionStrings:MyToDoAppSQLContext` を適切な接続文字列に更新します。
+### HomeController
+- トップページ、プライバシーポリシー、エラー画面を提供。
 
-2. **マイグレーションの適用**:
-   ```bash
-   dotnet ef database update
-   ```
+## 6. DB構成
+- テーブル: Item
+  - カラム: Id, ToDo, DueDate, IsComplete
+- マイグレーションで自動生成
 
-3. **アプリケーションの起動**:
-   ```bash
-   dotnet run
-   ```
-   ブラウザで `http://localhost:5016` にアクセスします。
+## 7. 設定ファイル
+- appsettings.json: DB接続文字列、ロギング設定
+- launchSettings.json: 起動URL, 環境変数
 
-## ライセンス
-このプロジェクトは MIT ライセンスの下で提供されています。詳細は各ライブラリのライセンスファイルを参照してください。
+## 8. セキュリティ
+- CSRF対策: [ValidateAntiForgeryToken] 属性
+- 入力検証: DataAnnotations, ModelState
+
+## 9. 使用ライブラリ
+- Microsoft.EntityFrameworkCore.SqlServer
+- Microsoft.EntityFrameworkCore.Tools
+- Microsoft.VisualStudio.Web.CodeGeneration.Design
+- Bootstrap, jQuery, jQuery Validation
+
+## 10. 使用方法
+1. **データベースの設定**
+   - `MyToDoAppSQL/appsettings.json` の `ConnectionStrings:MyToDoAppSQLContext` を自身のSQL Server環境に合わせて編集してください。
+2. **マイグレーションの適用**
+   - コマンドプロンプトでプロジェクトルートに移動し、以下を実行します。
+     ```bash
+     dotnet ef database update
+     ```
+3. **アプリケーションの起動**
+   - 以下のコマンドでアプリを起動します。
+     ```bash
+     dotnet run
+     ```
+   - ブラウザで `http://localhost:5016` などにアクセスしてください。
+
+## 11. ライセンス
+- MIT License
+
+---
+
+本仕様書はソースコードおよび構成ファイルから GitHub Copilot, GPT-4.1 で自動生成されています。
