@@ -17,6 +17,7 @@
     - [デプロイ スロットの作成](#デプロイ-スロットの作成)
     - [GitHub Codespaces を使ったアプリケーションの更新](#github-codespaces-を使ったアプリケーションの更新)
     - [プルリクエストの作成とマージ](#プルリクエストの作成とマージ)
+    - [デプロイ スロットの切り替え (スワップ)](#デプロイ-スロットの切り替え-スワップ)
   - [まとめ](#まとめ)
   - [参考資料](#参考資料)
 
@@ -163,7 +164,12 @@
     ![デプロイ スロット](./images/Deployment%20Slot2.png)
 6. デプロイ スロットの作成が完了すると、スロットの一覧が表示され、元の `PRODUCTION` スロットに加えて、新たに `staging` スロットが作成されたことが確認できます。![デプロイ スロット](./images/Deployment%20Slot3.png)
 7. `staging` スロットをクリックして、スロットの概要ページを開きます。![デプロイ スロット](./images/Deployment%20Slot4.png)
-8. [規定のドメイン] にある URL をクリックして、`staging` スロットの Web アプリが表示されることを確認します。![デプロイ スロット](./images/Deployment%20Slot5.png)
+8. [規定のドメイン] にある URL をクリックして、`staging` スロットの Web アプリが表示されることを確認します。
+9. `staging` スロットの Web アプリへのデプロイを GitHub Actions で行うために、`staging` スロットの発行プロファイルをダウンロードします。`staging` スロットの概要ページで、`発行プロファイルのダウンロード` をクリックして発行プロファイルをダウンロードします。![発行プロファイルのダウンロード](./images/Deployment%20Slot5.png)
+10. ダウンロードした発行プロファイルをメモ帳などのテキストエディターで開き、すべてを選択 (`Ctrl+A`) して文字列をコピー (`Ctrl+C`) します。![発行プロファイルのダウンロード](./images/Deployment%20Slot6.png)
+11. GitHub のリポジトリに戻り、`Settings` タブをクリックして、左側のメニューから `Secrets and variables` - `Actions` を選択します。![GitHub Secrets](./images/GitHub%20Secrets1.png)
+12. `Repository secrets` にある `AZUREAPPSERVICE_PUBLISHPROFILE_XXXXXXXXXXXXXX` の [鉛筆アイコン] をクリックして、シークレットの編集ページ `Actions secrets / Update secret` を開き、`Value` にコピーした発行プロファイルの文字列をペーストします。![GitHub Secrets](./images/GitHub%20Secrets2.png)
+13. `Update secret` ボタンをクリックして、シークレットを更新します。
 
 ### GitHub Codespaces を使ったアプリケーションの更新
 1. GitHub のリポジトリに戻り、`Code` タブをクリックして、リポジトリのトップページを開きます。左側に [main] と表示されているボタンをクリックして、[Find or create a branch] と書かれているテキストボックスに `feature1` と入力します。続いて `Create branch feature1 from main` をクリックして、作業用の新しいブランチを作成します。![Create New Branch](./images/Create%20New%20Branch.png)
@@ -195,8 +201,14 @@
 7. 変更内容に問題がなければ、[Conversation] タブに戻り、[Merge pull request] ボタンをクリックしてプルリクエストをマージします。![GitHub Pull Request](./images/GitHub%20Pull%20Request6.png)
 8. [Confirm merge] ボタンをクリックして、マージを確定します。![GitHub Pull Request](./images/GitHub%20Pull%20Request7.png)
 9. GitHub のリポジトリに戻り、`Actions` タブをクリックして、新しいワークフローがマージをトリガーに開始されていることを確認します。![GitHub Actions](./images/GitHub%20Pull%20Request8.png)
+10. ワークフローの実行が完了したら、Azure ポータルに戻り、作成した Web アプリの [デプロイ] - [デプロイ スロット] から `staging` の Web アプリの概要ページを開きます。[規定のドメイン] にある URL をクリックして、Web アプリがエラーなく表示され、背景の配色が変更されていることを確認します。![Web アプリ初期ページ](./images/WebApp%20Staging1.png)
 
-WIP...
+### デプロイ スロットの切り替え (スワップ)
+1. Azure ポータルにサインインして、作成した Web アプリの概要ページを開きます。
+2. ページ左側のメニューから `デプロイ` - `デプロイ スロット` を選択し、表示されたページで `Swap` をクリックします。
+3. `Swap` ページが表示されるので、`Source` と `Target` を確認して、[Start Swap] ボタンをクリックします。![デプロイ スロット](./images/Swap%20Deployment%20Slot1.png)
+4. デプロイ スロットのスワップが完了すると、スロットの一覧が表示され、元の `PRODUCTION` スロットと `staging` スロットが入れ替わります。
+5. `PRODUCTION` として最初に作成した Web アプリの概要ページを開き、[規定のドメイン] にある URL をクリックして Web アプリを表示します。スワップ前に `staging` スロットにデプロイした背景の配色を変更した Web アプリが `PRODUCTION` 環境に表示されることを確認します。
 
 ## まとめ
 
