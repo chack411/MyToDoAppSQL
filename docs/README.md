@@ -11,8 +11,12 @@
   - [事前準備](#事前準備)
   - [Web アプリとデータベースの作成](#web-アプリとデータベースの作成)
   - [GitHub リポジトリの作成](#github-リポジトリの作成)
+  - [SQL Database 接続文字列の確認と更新](#sql-database-接続文字列の確認と更新)
   - [アプリのビルドとデプロイ](#アプリのビルドとデプロイ)
   - [デプロイ スロットを利用したアプリケーションの更新](#デプロイ-スロットを利用したアプリケーションの更新)
+    - [デプロイ スロットの作成](#デプロイ-スロットの作成)
+    - [GitHub Codespaces を使ったアプリケーションの更新](#github-codespaces-を使ったアプリケーションの更新)
+    - [プルリクエストの作成とマージ](#プルリクエストの作成とマージ)
   - [まとめ](#まとめ)
   - [参考資料](#参考資料)
 
@@ -88,58 +92,109 @@
 5. `Create repository` をクリックします。![Create a new repository](./images/Create%20a%20new%20repository2.png)
 6. ご自身の GitHub アカウントのリポジトリに、指定した名前でリポジトリが作成されたことを確認します。![Create a new repository](./images/Create%20a%20new%20repository3.png)
 
-## アプリのビルドとデプロイ
+## SQL Database 接続文字列の確認と更新
 1. Azure ポータルにサインインして、作成した Web アプリの概要ページを開きます。
 2. 左側のメニューから `設定` - `環境設定` を選択して、`接続文字列` タブを選択します。`AZURE_SQL_CONNECTIONSTRING` という名前の接続文字列があることを確認します。![接続文字列](./images/Connection%20string.png)
 3. この接続文字列は、Web アプリを作成したときに自動生成された、SQL データベースへの接続情報です。この文字列をクリックして、`接続文字列の追加/編集` ページを開き、名前を `MyToDoAppSQLContext` に変更して、[適用] ボタンをクリックします。この接続文字列名 `MyToDoAppSQLContext` は、ソースコードで指定されている名前になります。![接続文字列の追加/編集](./images/Connection%20string2.png)
 4. `接続文字列` の一覧ページに戻りますので、名前が変更されていることを確認し、もう一度ページ下部にある `適用` ボタンをクリックして変更を保存します。![接続文字列の追加/編集](./images/Connection%20string3.png)
-5. 続いて、左側のメニューから `デプロイ` - `デプロイ センター` を選択します。
-6. `デプロイ センター` ページの [ソース] で、`GitHub` を選択し、GitHub にサインインします。
-7. `GitHub` のリポジトリを選択します。
-   - 組織: ご自身の GitHub アカウント名
+
+## アプリのビルドとデプロイ
+1. Web アプリの左側のメニューから `デプロイ` - `デプロイ センター` を選択します。
+2. `デプロイ センター` ページの [ソース] で、`GitHub` を選択し、GitHub にサインインします。
+3. `GitHub` のリポジトリを選択します。
+   - 組織: `ご自身の GitHub アカウント名`
    - Repository: `MyToDoAppSQL` (作成したリポジトリ名)
    - Branch: `main`
-8. `認証タイプ` で `基本認証` を選択します。
+4. `認証タイプ` で `基本認証` を選択します。
    - Azure サブスクリプションの所有者や共同作成者権限を持っている場合は、`ユーザー割り当て ID` を選択することで、セキュアな認証を行うこともできます。
-9. `デプロイ センター` ページ上部の [保存] ボタンをクリックして、設定を保存します。
-![Deployment Center](./images/Deployment%20Center.png)
-10. GitHub のリポジトリに戻り、Actions タブをクリックして、`Azure App Service` のデプロイメントが開始されていることを確認します。![GitHub Actions](./images/GitHub%20Actions.png)
-11. デプロイメントが完了したら、Azure ポータルに戻り、作成した Web アプリの概要ページを開きます。
-12. [規定のドメイン] にある URL をクリックして、Web アプリを表示します。初回の表示には数分かかります。また、初期画面で `Error` が表示されます。![Web アプリ初期ページ](./images/WebApp%20Error.png)
-13. このエラーは、**SQL Database にデータベースが作成されていない** ために発生しています。次の手順で、GitHub Actions のワークフロー ファイル (YAML ファイル) を更新して、データベースの初期化コマンドを実行して SQL Database にデータベースを作成します。
-14. GitHub のリポジトリに戻り、`Actions` タブをクリックして、`Add or update the Azure App Service build and deployment workflow config` のワークフローを選択します。![GitHub Actions](./images/GitHub%20Actions2.png)
-15. `main_<Azureで作成したWebアプリ名>.yml` をクリックして、ワークフロー ファイルを開きます。![GitHub Actions](./images/GitHub%20Actions3.png)
-16. このファイルは、GitHub Actions のワークフロー ファイルで、Azure App Service にデプロイするための設定が記述されています。ワークフロー ファイルの上部右側にある `鉛筆マーク` ボタンをクリックして、ワークフロー ファイルの編集画面に移ります。![GitHub Actions](./images/GitHub%20Actions4.png)
-17. 32行目の `name: Upload artifact for deployment job` の前に、以下のコマンドを追加してください。
-```yaml
-      - name: Database migration
-        run: |
-          dotnet tool install -g dotnet-ef
-          dotnet ef migrations bundle --runtime linux-x64 -p MyToDoAppSQL -o ${{env.DOTNET_ROOT}}/myapp/migrationsbundle
-```
-![GitHub Actions](./images/GitHub%20Actions5.png)
-18. 追加したら、`Commit changes` ボタンをクリックして、変更をコミットします。この際 `Commit directly to hte main branch` が選択されていることを確認してください。![GitHub Actions](./images/GitHub%20Actions6.png)
-19. 再び、GitHub のリポジトリに戻り、`Actions` タブをクリックして、新しいワークフローが開始されていることを確認します。![GitHub Actions](./images/GitHub%20Actions7.png)
-20. ワークフローの実行が完了したら、Azure ポータルに戻り、作成した Web アプリの概要ページを開きます。
-21. ページ左側のメニューから `開発ツール` - `SSH` を選択して、`移動 →` ボタンをクリックします。![SSH](./images/SSH.png)
-22. `SSH` ページが表示されます。![SSH](./images/SSH2.png)
-23. 次のコマンドを入力して `/home/site/wwwroot` フォルダに移動します。
+5.  `デプロイ センター` ページ上部の [保存] ボタンをクリックして、設定を保存します。![Deployment Center](./images/Deployment%20Center.png)
+6.  GitHub のリポジトリに戻り、Actions タブをクリックして、`Azure App Service` のデプロイメントが開始されていることを確認します。![GitHub Actions](./images/GitHub%20Actions.png)
+7.  デプロイメントが完了したら、Azure ポータルに戻り、作成した Web アプリの概要ページを開きます。
+8.  [規定のドメイン] にある URL をクリックして、Web アプリを表示します。初回の表示には数分かかります。また、初期画面で `Error` が表示されます。![Web アプリ初期ページ](./images/WebApp%20Error.png)
+9.  このエラーは、**SQL Database にデータベースが作成されていない** ために発生しています。次の手順で、GitHub Actions のワークフロー ファイル (YAML ファイル) を更新して、データベースの初期化コマンドを実行して SQL Database にデータベースを作成します。
+10. GitHub のリポジトリに戻り、`Actions` タブをクリックして、`Add or update the Azure App Service build and deployment workflow config` のワークフローを選択します。![GitHub Actions](./images/GitHub%20Actions2.png)
+11. `main_<Azureで作成したWebアプリ名>.yml` をクリックして、ワークフロー ファイルを開きます。![GitHub Actions](./images/GitHub%20Actions3.png)
+12. このファイルは、GitHub Actions のワークフロー ファイルで、Azure App Service にデプロイするための設定が記述されています。ワークフロー ファイルの上部右側にある `鉛筆マーク` ボタンをクリックして、ワークフロー ファイルの編集画面に移ります。![GitHub Actions](./images/GitHub%20Actions4.png)
+13. 32行目の `name: Upload artifact for deployment job` の前に、以下の記述を追加してください。
+    ```yaml
+        - name: Database migration
+            run: |
+            dotnet tool install -g dotnet-ef
+            dotnet ef migrations bundle --runtime linux-x64 -p MyToDoAppSQL -o ${{env.DOTNET_ROOT}}/myapp/migrationsbundle
+    ```
+    ![GitHub Actions](./images/GitHub%20Actions5.png)
+
+14. 追加した内容を確認して問題なければ、`Commit changes` ボタンをクリックして、変更をコミットします。この際 `Commit directly to hte main branch` が選択されていることを確認してください。![GitHub Actions](./images/GitHub%20Actions6.png)
+14. 再び、GitHub のリポジトリに戻り、`Actions` タブをクリックして、新しいワークフローが開始されていることを確認します。![GitHub Actions](./images/GitHub%20Actions7.png)
+15. ワークフローの実行が完了したら、Azure ポータルに戻り、作成した Web アプリの概要ページを開きます。
+16. ページ左側のメニューから `開発ツール` - `SSH` を選択して、`移動 →` ボタンをクリックします。![SSH](./images/SSH.png)
+17. `SSH` ページが表示されます。![SSH](./images/SSH2.png)
+18. 次のコマンドを入力して `/home/site/wwwroot` フォルダに移動します。
     ```bash
     cd /home/site/wwwroot
     ```
-
-24. `wwwroot` フォルダに移動したら、`ls` コマンドを入力して、デプロイした Web アプリのファイル群があることを確認します。
-25. `migrationsbundle` コマンドを実行します。   
+19. `wwwroot` フォルダに移動したら、`ls` コマンドを入力して、デプロイした Web アプリのファイル群があることを確認します。
+    ```bash
+    ls
+    ```
+20. `migrationsbundle` コマンドを実行します。   
     ```bash
     migrationsbundle
     ```
-26. このコマンドは、アプリケーションのデータベースのスキーマに基づいて、SQL データベースの初期化を行うコマンドです。実行後、以下のようなメッセージが表示され、初期状態の SQL データベースが作成されます。![SSH](./images/SSH3.png)
-27. ふたたび、Azure ポータルに戻り、作成した Web アプリの概要ページを開きます。[規定のドメイン] にある URL をクリックして、Web アプリがエラーなく表示されることを確認します。![Web アプリ初期ページ](./images/WebApp%20initial%20page2.png)
-28. `+ Create New` ボタンをクリックして、タスクを追加して、動作を確認します。![Web アプリ初期ページ](./images/WebApp%20create%20task.png)
+21. 上記のコマンドは、アプリケーションのデータベースのスキーマに基づいて、SQL データベースの初期化を行うコマンドです。実行後、以下のようなメッセージが表示され、初期状態の SQL データベースが作成されます。![SSH](./images/SSH3.png)
+22. 再び Azure ポータルに戻り、作成した Web アプリの概要ページを開きます。[規定のドメイン] にある URL をクリックして、Web アプリがエラーなく表示されることを確認します。![Web アプリ初期ページ](./images/WebApp%20initial%20page2.png)
+23. `+ Create New` ボタンをクリックして、任意のタスクを追加して動作を確認します。![Web アプリ初期ページ](./images/WebApp%20create%20task.png)
 ![Web アプリ初期ページ](./images/WebApp%20initial%20page3.png)
 
 
 ## デプロイ スロットを利用したアプリケーションの更新
+
+ここまでの手順で、Azure App Services と SQL データベースを使用した .NET アプリケーションのデプロイが完了しました。次に、デプロイ スロットを利用して、アプリケーションの更新を行います。
+デプロイ スロットを使用すると、アプリケーションの新しいバージョンを開発/テスト環境で確認してから、本番環境に切り替えることができます。これにより、アプリケーションの可用性を高めることができます。
+
+### デプロイ スロットの作成
+1. Azure ポータルにサインインして、作成した Web アプリの概要ページを開きます。
+2. 前の演習で作成した Web アプリの App Service のプランは `Basic B1` です。デプロイ スロットを使用するには、`Standard` プラン以上にアップグレードする必要があります。ページ左側のメニューから `設定` - `スケールアップ (App Service のプラン` を選択して、表示されるプランからデプロイ スロットが使用できる `Standard S1` を選択して、[選択] ボタンをクリックします。![App Service プランの変更](./images/App%20Service%20Plan.png)
+3. 続いて、[アップグレード] ボタンをクリックして、プランの変更を適用します。![App Service プランの変更](./images/App%20Service%20Plan2.png)
+4. ページ左側のメニューから `デプロイ` - `デプロイ スロット` を選択し、表示されたページで `Add slot` をクリックします。![デプロイ スロット](./images/Deployment%20Slot.png)
+5. `Add Slot` ページが表示されますので、次の値を入力/選択して [Add] ボタンをクリックします。
+   - `Name` : `staging`
+   - `Clone settings from:` : `<Web アプリ名>`
+    ![デプロイ スロット](./images/Deployment%20Slot2.png)
+6. デプロイ スロットの作成が完了すると、スロットの一覧が表示され、元の `PRODUCTION` スロットに加えて、新たに `staging` スロットが作成されたことが確認できます。![デプロイ スロット](./images/Deployment%20Slot3.png)
+7. `staging` スロットをクリックして、スロットの概要ページを開きます。![デプロイ スロット](./images/Deployment%20Slot4.png)
+8. [規定のドメイン] にある URL をクリックして、`staging` スロットの Web アプリが表示されることを確認します。![デプロイ スロット](./images/Deployment%20Slot5.png)
+
+### GitHub Codespaces を使ったアプリケーションの更新
+1. GitHub のリポジトリに戻り、`Code` タブをクリックして、リポジトリのトップページを開きます。左側に [main] と表示されているボタンをクリックして、[Find or create a branch] と書かれているテキストボックスに `feature1` と入力します。続いて `Create branch feature1 from main` をクリックして、作業用の新しいブランチを作成します。![Create New Branch](./images/Create%20New%20Branch.png)
+2. 新しいブランチが作成されたら、緑色の `Code` ボタンをクリックして表示されるポップアップウィンドウで、`Codespaces` タブをクリックし、`Create codespace on feature1` をクリックして、Codespace を開きます。![GitHub Codespaces](./images/GitHub%20Codespace1.png)
+4. Web ブラウザ上に Visual Studio Code と同じ UI で、コードエディタが表示されます。![GitHub Codespaces](./images/GitHub%20Codespace2.png)
+5. エディタウィンドウ左下に表示されているブランチ名が `feature1` になっていることを確認します。![GitHub Codespaces](./images/GitHub%20Codespace3.png)
+6. `.github/workflows` フォルダを開き、`main_<Azureで作成したWebアプリ名>.yml` をクリックして、ワークフロー ファイルを開き、61行目の `slot-name: Production` を `slot-name: staging` に変更します。ここで指定した名前のデプロイ スロットに Web アプリがデプロイされるようになります。![GitHub Codespaces](./images/GitHub%20Codespace4.png)
+7. 続いて、`MyToDoAppSQL/wwwroot/css/site.css` をクリックして CSS ファイルを開き、20 行目の `body` 要素に、以下のスタイル属性を追加します。
+    ```css
+    body {
+        background-color: lightpink;
+        ...
+    }
+    ```
+    ![GitHub Codespaces](./images/GitHub%20Codespace5.png)
+8. 変更が完了したら、左側のメニューから `ソース管理` アイコンをクリックして、変更内容を確認します。問題なければ、[コミットメッセージ] を入力してから [コミット] ボタンをクリックします。![GitHub Codespaces](./images/GitHub%20Codespace6.png)
+9. 次のメッセージが表示されたら、[はい] ボタンをクリックします。![GitHub Codespaces](./images/GitHub%20Codespace7.png)
+10. ソース管理の [変更の同期] ボタンをクリックして、変更をリモートの `feature1` ブランチにプッシュします。![GitHub Codespaces](./images/GitHub%20Codespace8.png)
+11. 次のメッセージが表示されたら、[OK] ボタンをクリックします。![GitHub Codespaces](./images/GitHub%20Codespace9.png)
+12. これで、`feature1` ブランチに変更がプッシュされました。
+
+### プルリクエストの作成とマージ
+1. GitHub のリポジトリに戻ると、`Compare & pull request` ボタンが表示されているので、クリックします。![GitHub Pull Request](./images/GitHub%20Pull%20Request1.png)
+2. [feature1] ブランチから [main] ブランチへのプルリクエストであることと、タイトルが入力されていることを確認します。合わせて、[Add a description] に変更内容を記入します。![GitHub Pull Request](./images/GitHub%20Pull%20Request2.png)
+3. [Add a description] には、GitHub Copilot の Summary 機能を使用して、変更内容を記入することもできます。![GitHub Pull Request](./images/GitHub%20Pull%20Request3.png)
+4. [Create pull request] ボタンをクリックして、プルリクエストを作成します。
+5. 作成されたプルリクエストを確認します。![GitHub Pull Request](./images/GitHub%20Pull%20Request4.png)
+6. [Files changed] タブをクリックすると、変更内容を確認することができます。![GitHub Pull Request](./images/GitHub%20Pull%20Request5.png)
+7. 変更内容に問題がなければ、[Conversation] タブに戻り、[Merge pull request] ボタンをクリックしてプルリクエストをマージします。![GitHub Pull Request](./images/GitHub%20Pull%20Request6.png)
+8. [Confirm merge] ボタンをクリックして、マージを確定します。![GitHub Pull Request](./images/GitHub%20Pull%20Request7.png)
+9. GitHub のリポジトリに戻り、`Actions` タブをクリックして、新しいワークフローがマージをトリガーに開始されていることを確認します。![GitHub Actions](./images/GitHub%20Pull%20Request8.png)
 
 WIP...
 
