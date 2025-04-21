@@ -1,3 +1,18 @@
+# Azure App Services & SQL Database ハンズオン
+
+このリポジトリは、Azure App Services と SQL Database を使用した ASP.NET Core Web アプリケーションのハンズオン用に作成されたものです。
+
+ハンズオンドキュメントは [こちら](docs/README.md) をご覧ください。
+
+- **アプリケーション名**: MyToDoAppSQL
+- **アプリケーション概要**: タスク管理アプリケーション
+- **使用技術**: ASP.NET Core 9.0, Entity Framework Core 9.0, SQL Server
+- **データベース**: SQL Server
+- **デプロイ先**: Azure App Services
+- **データベース接続**: Azure SQL Database
+- **CI/CD**: GitHub Actions
+- **作成年月**: 2025年4月 
+
 # MyToDoAppSQL ソフトウェア内部仕様書
 
 ## 1. システム概要
