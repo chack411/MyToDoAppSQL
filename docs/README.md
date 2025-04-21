@@ -1,10 +1,10 @@
-# Azure App Services with SQL DB & .NET ハンズオン
+# Azure App Services & SQL Database ハンズオン
 
-⏲️ _Est. time to complete: 90 min._ ⏲️
+⏲️ _Est. time to complete: 60 - 90 min._ ⏲️
 
 ## 目次
 
-- [Azure App Services with SQL DB \& .NET ハンズオン](#azure-app-services-with-sql-db--net-ハンズオン)
+- [Azure App Services \& SQL Database ハンズオン](#azure-app-services--sql-database-ハンズオン)
   - [目次](#目次)
   - [本ハンズオンで学べること 🎯](#本ハンズオンで学べること-)
   - [アプリケーション概要](#アプリケーション概要)
@@ -23,12 +23,24 @@
 
 ## 本ハンズオンで学べること 🎯
 
-- Azure App Services と SQL データベースの概要
-- .NET と ASP.NET Core の概要
+- Azure App Services と SQL Database の概要
+  - Azure App Services の作成
+  - SQL Database の作成
+  - SQL Database の接続文字列の確認と更新
+  - Azure App Services へのデプロイ
+  - デプロイ スロットの作成
+  - デプロイ スロットの切り替え
+  - GitHub Actions を使用した CI/CD の実行
+  - GitHub Codespaces を使用したアプリケーションの更新
+  - GitHub Pull Request の作成とマージ
 - GitHub の概要
   - GitHub Actions の概要
   - 変更を Commit して Push する方法
   - Pull Request を作成してマージする方法
+  - GitHub Codespaces の概要
+- .NET と ASP.NET Core MVC の概要
+  - ASP.NET Core MVC アプリケーションの概要
+  - Entity Framework Core を使用した SQL Database への接続
 
 ## アプリケーション概要
 
@@ -80,7 +92,7 @@
 ![Web アプリとデータベースの作成](./images/Create%20WebApp%20and%20DB.png)
 1. 上記の情報を入力したら、`確認および作成` をクリックしてください。
 2. `確認および作成` ページでエラーがなければ、`作成` をクリックしてください。
-3. デプロイメントが完了するまで数分かかります。デプロイメントが完了したら、[リソースに移動] ボタンをクリックしてください。
+3. デプロイメントが完了するまで数分かかります。デプロイメントが完了したら、`リソースに移動` ボタンをクリックしてください。
 4. 作成した Web アプリの概要ページが表示されます。![Web アプリの概要ページ](./images/WebApp%20details.png)
 5. [規定のドメイン] にある URL をクリックして、Web アプリが正常に作成されたことを確認してください。![Web アプリ初期ページ](./images/WebApp%20initial%20page.png)
 
@@ -95,8 +107,8 @@
 
 ## SQL Database 接続文字列の確認と更新
 1. Azure ポータルにサインインして、作成した Web アプリの概要ページを開きます。
-2. 左側のメニューから `設定` - `環境設定` を選択して、`接続文字列` タブを選択します。`AZURE_SQL_CONNECTIONSTRING` という名前の接続文字列があることを確認します。![接続文字列](./images/Connection%20string.png)
-3. この接続文字列は、Web アプリを作成したときに自動生成された、SQL データベースへの接続情報です。この文字列をクリックして、`接続文字列の追加/編集` ページを開き、名前を `MyToDoAppSQLContext` に変更して、[適用] ボタンをクリックします。この接続文字列名 `MyToDoAppSQLContext` は、ソースコードで指定されている名前になります。![接続文字列の追加/編集](./images/Connection%20string2.png)
+2. 左側のメニューから `設定` - `環境変数` を選択して、`接続文字列` タブを選択します。`AZURE_SQL_CONNECTIONSTRING` という名前の接続文字列があることを確認します。![接続文字列](./images/Connection%20string.png)
+3. この接続文字列は、Web アプリを作成したときに自動生成された、SQL データベースへの接続情報です。この文字列をクリックして、`接続文字列の追加/編集` ページを開き、名前を `MyToDoAppSQLContext` に変更して、`適用` ボタンをクリックします。この接続文字列名 `MyToDoAppSQLContext` は、ソースコードで指定されている名前になります。![接続文字列の追加/編集](./images/Connection%20string2.png)
 4. `接続文字列` の一覧ページに戻りますので、名前が変更されていることを確認し、もう一度ページ下部にある `適用` ボタンをクリックして変更を保存します。![接続文字列の追加/編集](./images/Connection%20string3.png)
 
 ## アプリのビルドとデプロイ
@@ -108,7 +120,7 @@
    - Branch: `main`
 4. `認証タイプ` で `基本認証` を選択します。
    - Azure サブスクリプションの所有者や共同作成者権限を持っている場合は、`ユーザー割り当て ID` を選択することで、セキュアな認証を行うこともできます。
-5.  `デプロイ センター` ページ上部の [保存] ボタンをクリックして、設定を保存します。![Deployment Center](./images/Deployment%20Center.png)
+5.  `デプロイ センター` ページ上部の `保存` ボタンをクリックして、設定を保存します。![Deployment Center](./images/Deployment%20Center.png)
 6.  GitHub のリポジトリに戻り、Actions タブをクリックして、`Azure App Service` のデプロイメントが開始されていることを確認します。![GitHub Actions](./images/GitHub%20Actions.png)
 7.  デプロイメントが完了したら、Azure ポータルに戻り、作成した Web アプリの概要ページを開きます。
 8.  [規定のドメイン] にある URL をクリックして、Web アプリを表示します。初回の表示には数分かかります。また、初期画面で `Error` が表示されます。![Web アプリ初期ページ](./images/WebApp%20Error.png)
@@ -119,7 +131,7 @@
 13. 32行目の `name: Upload artifact for deployment job` の前に、以下の記述を追加してください。
     ```yaml
         - name: Database migration
-            run: |
+          run: |
             dotnet tool install -g dotnet-ef
             dotnet ef migrations bundle --runtime linux-x64 -p MyToDoAppSQL -o ${{env.DOTNET_ROOT}}/myapp/migrationsbundle
     ```
@@ -155,10 +167,10 @@
 
 ### デプロイ スロットの作成
 1. Azure ポータルにサインインして、作成した Web アプリの概要ページを開きます。
-2. 前の演習で作成した Web アプリの App Service のプランは `Basic B1` です。デプロイ スロットを使用するには、`Standard` プラン以上にアップグレードする必要があります。ページ左側のメニューから `設定` - `スケールアップ (App Service のプラン` を選択して、表示されるプランからデプロイ スロットが使用できる `Standard S1` を選択して、[選択] ボタンをクリックします。![App Service プランの変更](./images/App%20Service%20Plan.png)
-3. 続いて、[アップグレード] ボタンをクリックして、プランの変更を適用します。![App Service プランの変更](./images/App%20Service%20Plan2.png)
+2. 前の演習で作成した Web アプリの App Service のプランは `Basic B1` です。デプロイ スロットを使用するには、`Standard` プラン以上にアップグレードする必要があります。ページ左側のメニューから `設定` - `スケールアップ (App Service のプラン` を選択して、表示されるプランからデプロイ スロットが使用できる `Standard S1` を選択して、`選択` ボタンをクリックします。![App Service プランの変更](./images/App%20Service%20Plan.png)
+3. 続いて、`アップグレード` ボタンをクリックして、プランの変更を適用します。![App Service プランの変更](./images/App%20Service%20Plan2.png)
 4. ページ左側のメニューから `デプロイ` - `デプロイ スロット` を選択し、表示されたページで `Add slot` をクリックします。![デプロイ スロット](./images/Deployment%20Slot.png)
-5. `Add Slot` ページが表示されますので、次の値を入力/選択して [Add] ボタンをクリックします。
+5. `Add Slot` ページが表示されますので、次の値を入力/選択して `Add` ボタンをクリックします。
    - `Name` : `staging`
    - `Clone settings from:` : `<Web アプリ名>`
     ![デプロイ スロット](./images/Deployment%20Slot2.png)
@@ -185,28 +197,28 @@
     }
     ```
     ![GitHub Codespaces](./images/GitHub%20Codespace5.png)
-8. 変更が完了したら、左側のメニューから `ソース管理` アイコンをクリックして、変更内容を確認します。問題なければ、[コミットメッセージ] を入力してから [コミット] ボタンをクリックします。![GitHub Codespaces](./images/GitHub%20Codespace6.png)
-9. 次のメッセージが表示されたら、[はい] ボタンをクリックします。![GitHub Codespaces](./images/GitHub%20Codespace7.png)
-10. ソース管理の [変更の同期] ボタンをクリックして、変更をリモートの `feature1` ブランチにプッシュします。![GitHub Codespaces](./images/GitHub%20Codespace8.png)
-11. 次のメッセージが表示されたら、[OK] ボタンをクリックします。![GitHub Codespaces](./images/GitHub%20Codespace9.png)
+8. 変更が完了したら、左側のメニューから `ソース管理` アイコンをクリックして、変更内容を確認します。問題なければ、[コミットメッセージ] を入力してから `コミット` ボタンをクリックします。![GitHub Codespaces](./images/GitHub%20Codespace6.png)
+9. 次のメッセージが表示されたら、`はい` ボタンをクリックします。![GitHub Codespaces](./images/GitHub%20Codespace7.png)
+10. ソース管理の `変更の同期` ボタンをクリックして、変更をリモートの `feature1` ブランチにプッシュします。![GitHub Codespaces](./images/GitHub%20Codespace8.png)
+11. 次のメッセージが表示されたら、`OK` ボタンをクリックします。![GitHub Codespaces](./images/GitHub%20Codespace9.png)
 12. これで、`feature1` ブランチに変更がプッシュされました。
 
 ### プルリクエストの作成とマージ
 1. GitHub のリポジトリに戻ると、`Compare & pull request` ボタンが表示されているので、クリックします。![GitHub Pull Request](./images/GitHub%20Pull%20Request1.png)
 2. [feature1] ブランチから [main] ブランチへのプルリクエストであることと、タイトルが入力されていることを確認します。合わせて、[Add a description] に変更内容を記入します。![GitHub Pull Request](./images/GitHub%20Pull%20Request2.png)
 3. [Add a description] には、GitHub Copilot の Summary 機能を使用して、変更内容を記入することもできます。![GitHub Pull Request](./images/GitHub%20Pull%20Request3.png)
-4. [Create pull request] ボタンをクリックして、プルリクエストを作成します。
+4. `Create pull request` ボタンをクリックして、プルリクエストを作成します。
 5. 作成されたプルリクエストを確認します。![GitHub Pull Request](./images/GitHub%20Pull%20Request4.png)
-6. [Files changed] タブをクリックすると、変更内容を確認することができます。![GitHub Pull Request](./images/GitHub%20Pull%20Request5.png)
-7. 変更内容に問題がなければ、[Conversation] タブに戻り、[Merge pull request] ボタンをクリックしてプルリクエストをマージします。![GitHub Pull Request](./images/GitHub%20Pull%20Request6.png)
-8. [Confirm merge] ボタンをクリックして、マージを確定します。![GitHub Pull Request](./images/GitHub%20Pull%20Request7.png)
+6. `Files changed` タブをクリックすると、変更内容を確認することができます。![GitHub Pull Request](./images/GitHub%20Pull%20Request5.png)
+7. 変更内容に問題がなければ、`Conversation` タブに戻り、`Merge pull request` ボタンをクリックしてプルリクエストをマージします。![GitHub Pull Request](./images/GitHub%20Pull%20Request6.png)
+8. `Confirm merge` ボタンをクリックして、マージを確定します。![GitHub Pull Request](./images/GitHub%20Pull%20Request7.png)
 9. GitHub のリポジトリに戻り、`Actions` タブをクリックして、新しいワークフローがマージをトリガーに開始されていることを確認します。![GitHub Actions](./images/GitHub%20Pull%20Request8.png)
 10. ワークフローの実行が完了したら、Azure ポータルに戻り、作成した Web アプリの [デプロイ] - [デプロイ スロット] から `staging` の Web アプリの概要ページを開きます。[規定のドメイン] にある URL をクリックして、Web アプリがエラーなく表示され、背景の配色が変更されていることを確認します。![Web アプリ初期ページ](./images/WebApp%20Staging1.png)
 
 ### デプロイ スロットの切り替え (スワップ)
 1. Azure ポータルにサインインして、作成した Web アプリの概要ページを開きます。
 2. ページ左側のメニューから `デプロイ` - `デプロイ スロット` を選択し、表示されたページで `Swap` をクリックします。
-3. `Swap` ページが表示されるので、`Source` と `Target` を確認して、[Start Swap] ボタンをクリックします。![デプロイ スロット](./images/Swap%20Deployment%20Slot1.png)
+3. `Swap` ページが表示されるので、`Source` と `Target` を確認して、`Start Swap` ボタンをクリックします。![デプロイ スロット](./images/Swap%20Deployment%20Slot1.png)
 4. デプロイ スロットのスワップが完了すると、スロットの一覧が表示され、元の `PRODUCTION` スロットと `staging` スロットが入れ替わります。
 5. `PRODUCTION` として最初に作成した Web アプリの概要ページを開き、[規定のドメイン] にある URL をクリックして Web アプリを表示します。スワップ前に `staging` スロットにデプロイした背景の配色を変更した Web アプリが `PRODUCTION` 環境に表示されることを確認します。
 
