@@ -130,10 +130,10 @@
 12. このファイルは、GitHub Actions のワークフロー ファイルで、Azure App Service にデプロイするための設定が記述されています。ワークフロー ファイルの上部右側にある `鉛筆マーク` ボタンをクリックして、ワークフロー ファイルの編集画面に移ります。![GitHub Actions](./images/GitHub%20Actions4.png)
 13. 32行目の `name: Upload artifact for deployment job` の前に、以下の記述を追加してください。
     ```yaml
-        - name: Database migration
-          run: |
-            dotnet tool install -g dotnet-ef
-            dotnet ef migrations bundle --runtime linux-x64 -p MyToDoAppSQL -o ${{env.DOTNET_ROOT}}/myapp/migrationsbundle
+          - name: Database migration
+            run: |
+              dotnet tool install -g dotnet-ef
+              dotnet ef migrations bundle --runtime linux-x64 -p MyToDoAppSQL -o ${{env.DOTNET_ROOT}}/myapp/migrationsbundle
     ```
     ![GitHub Actions](./images/GitHub%20Actions5.png)
 
