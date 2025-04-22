@@ -1,10 +1,10 @@
-# Azure App Services & SQL Database ハンズオン
+# Azure App Service & SQL Database ハンズオン
 
 ⏲️ _Est. time to complete: 60 - 90 min._ ⏲️
 
 ## 目次
 
-- [Azure App Services \& SQL Database ハンズオン](#azure-app-services--sql-database-ハンズオン)
+- [Azure App Service \& SQL Database ハンズオン](#azure-app-service--sql-database-ハンズオン)
   - [目次](#目次)
   - [本ハンズオンで学べること 🎯](#本ハンズオンで学べること-)
   - [アプリケーション概要](#アプリケーション概要)
@@ -23,11 +23,11 @@
 
 ## 本ハンズオンで学べること 🎯
 
-- Azure App Services と SQL Database の概要
-  - Azure App Services の作成
+- Azure App Service と SQL Database の概要
+  - Azure App Service の作成
   - SQL Database の作成
   - SQL Database の接続文字列の確認と更新
-  - Azure App Services へのデプロイ
+  - Azure App Service へのデプロイ
   - デプロイ スロットの作成
   - デプロイ スロットの切り替え
   - GitHub Actions を使用した CI/CD の実行
@@ -162,7 +162,7 @@
 
 ## デプロイ スロットを利用したアプリケーションの更新
 
-ここまでの手順で、Azure App Services と SQL データベースを使用した .NET アプリケーションのデプロイが完了しました。次に、デプロイ スロットを利用して、アプリケーションの更新を行います。
+ここまでの手順で、Azure App Service と SQL データベースを使用した .NET アプリケーションのデプロイが完了しました。次に、デプロイ スロットを利用して、アプリケーションの更新を行います。
 デプロイ スロットを使用すると、アプリケーションの新しいバージョンを開発/テスト環境で確認してから、本番環境に切り替えることができます。これにより、アプリケーションの可用性を高めることができます。
 
 ### デプロイ スロットの作成
@@ -224,8 +224,8 @@
 
 ## まとめ
 
-以上で、Azure App Services と SQL データベースを使用した .NET アプリケーションのデプロイが完了しました。GitHub Actions を使用して、アプリケーションのビルドとデプロイを自動化する方法についても学びました。
-今後は、GitHub Copilot を使用して、アプリケーションの機能を追加したり、デザインを変更したりすることができます。また、Azure App Services のデプロイ スロットを利用して、アプリケーションの更新を行うこともできます。これにより、アプリケーションの可用性を高めることができます。さらには、Azure の他のサービスを組み合わせて、より高度なアプリケーションを構築することも可能です。例えば、Azure Functions を使用してサーバーレスアーキテクチャを実現したり、Azure Cosmos DB を使用して分散データベースを構築したりすることができます。
+以上で、Azure App Service と SQL データベースを使用した .NET アプリケーションのデプロイが完了しました。GitHub Actions を使用して、アプリケーションのビルドとデプロイを自動化する方法についても学びました。
+今後は、GitHub Copilot を使用して、アプリケーションの機能を追加したり、デザインを変更したりすることができます。また、Azure App Service のデプロイ スロットを利用して、アプリケーションの更新を行うこともできます。これにより、アプリケーションの可用性を高めることができます。さらには、Azure の他のサービスを組み合わせて、より高度なアプリケーションを構築することも可能です。例えば、Azure Functions を使用してサーバーレスアーキテクチャを実現したり、Azure Cosmos DB を使用して分散データベースを構築したりすることができます。
 ぜひ、Azure のサービスを活用して、より高度なアプリケーションを構築してみてください。
 
 おつかれさまでした！
